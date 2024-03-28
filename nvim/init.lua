@@ -68,24 +68,26 @@ require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
   -- tmux plugins
-  {'christoomey/vim-tmux-navigator', lazy=false},
+  { 'christoomey/vim-tmux-navigator', lazy = false },
   -- Git related plugins
   'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
 
-   "williamboman/mason.nvim",
-   "mfussenegger/nvim-dap",
-   "jay-babu/mason-nvim-dap.nvim",
+  "williamboman/mason.nvim",
+  "mfussenegger/nvim-dap",
+  "jay-babu/mason-nvim-dap.nvim",
 
   "vim-test/vim-test",
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  {'scalameta/nvim-metals', dependencies = { "nvim-lua/plenary.nvim" }},
+  { 'scalameta/nvim-metals',          dependencies = { "nvim-lua/plenary.nvim" } },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    -- opts = {
+    --   inlay_hints = { enabled = true },
+    -- },
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
@@ -93,7 +95,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -118,7 +120,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -132,7 +134,8 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
@@ -211,6 +214,14 @@ require('lazy').setup({
     },
     config = function()
       require("nvim-tree").setup {
+        sync_root_with_cwd = true,
+        update_focused_file = {
+          enable = true,
+          update_cwd = true,
+        },
+        filters = {
+          dotfiles = false,
+        }
       }
     end,
   },
@@ -338,7 +349,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'zig', 'scala', 'javascript' },
+  ensure_installed = { 'c', 'cpp', 'go', 'json', 'json5', 'jsonc', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'zig', 'scala', 'javascript' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -410,7 +421,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -425,6 +436,9 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
+  if client.server_capabilities.inlayHintProvider then
+    vim.lsp.buf.inlay_hint(bufnr, true)
+  end
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -462,12 +476,26 @@ end
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
   -- gopls = {},
   -- pyright = {},
-  -- rust_analyzer = {},
+  rust_analyzer = {},
   -- tsserver = {},
-  html = { filetypes = { 'html', 'twig', 'hbs'} },
+  jsonls = {
+    -- lazy-load schemastore when needed
+    settings = {
+      json = {
+        format = {
+          enable = true,
+        },
+        validate = { enable = true },
+      },
+      jsonc = {
+        format = { enable = true },
+        validate = { enable = true },
+      }
+    },
+  },
+  html = { filetypes = { 'html', 'twig', 'hbs' } },
   zls = {},
   clangd = {},
   lua_ls = {
@@ -476,6 +504,7 @@ local servers = {
       telemetry = { enable = false },
     },
   },
+  pyright = {}
 }
 
 -- Setup neovim lua configuration
@@ -490,7 +519,7 @@ require('mason').setup()
 
 require('mason-nvim-dap').setup({
   automatic_installation = true,
-  ensure_installed = {'codelldb'},
+  ensure_installed = { 'codelldb' },
 })
 
 -- Ensure the servers above are installed
@@ -525,9 +554,10 @@ vim.opt_global.completeopt = { "menuone", "noinsert", "noselect" }
 local api = vim.api
 local cmd = vim.cmd
 local map = vim.keymap.set
+
 -- LSP mappings
-map("n", "gD",  vim.lsp.buf.definition)
-map("n", "K",  vim.lsp.buf.hover)
+map("n", "gd", vim.lsp.buf.definition)
+map("n", "K", vim.lsp.buf.hover)
 map("n", "gi", vim.lsp.buf.implementation)
 map("n", "gr", vim.lsp.buf.references)
 map("n", "gds", vim.lsp.buf.document_symbol)
@@ -537,7 +567,6 @@ map("n", "<leader>sh", vim.lsp.buf.signature_help)
 map("n", "<leader>rn", vim.lsp.buf.rename)
 map("n", "<leader>f", vim.lsp.buf.format)
 map("n", "<leader>ca", vim.lsp.buf.code_action)
-
 map("n", "<leader>ws", function()
   require("metals").hover_worksheet()
 end)
@@ -557,6 +586,33 @@ metals_config.settings = {
   showImplicitArguments = true,
   excludedPackages = { "akka.actor.typed.javadsl", "com.github.swagger.akka.javadsl" },
 }
+-- Debug settings if you're using nvim-dap
+local dap = require("dap")
+
+dap.configurations.scala = {
+  {
+    type = "scala",
+    request = "launch",
+    name = "RunOrTest",
+    metals = {
+      runType = "runOrTestFile",
+      --args = { "firstArg", "secondArg", "thirdArg" }, -- here just as an example
+    },
+  },
+  {
+    type = "scala",
+    request = "launch",
+    name = "Test Target",
+    metals = {
+      runType = "testTarget",
+    },
+  },
+}
+
+metals_config.on_attach = function(client, bufnr)
+  require("metals").setup_dap()
+end
+
 
 -- Autocmd that will actually be in charging of starting the whole thing
 local nvim_metals_group = api.nvim_create_augroup("nvim-metals", { clear = true })
@@ -580,6 +636,7 @@ api.nvim_create_autocmd("FileType", {
 
 -- Example if you are using cmp how to make sure the correct capabilities for snippets are set
 metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
+
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
