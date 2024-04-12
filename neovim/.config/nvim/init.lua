@@ -71,15 +71,16 @@ require('lazy').setup({
   { 'christoomey/vim-tmux-navigator', lazy = false },
   -- Git related plugins
   'tpope/vim-fugitive',
-
+  'mg979/vim-visual-multi',
   "williamboman/mason.nvim",
+  { "rcarriga/nvim-dap-ui",           dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
   "mfussenegger/nvim-dap",
   "jay-babu/mason-nvim-dap.nvim",
 
   "vim-test/vim-test",
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  { 'scalameta/nvim-metals',          dependencies = { "nvim-lua/plenary.nvim" } },
+  { 'scalameta/nvim-metals', dependencies = { "nvim-lua/plenary.nvim" } },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -496,7 +497,7 @@ local servers = {
     },
   },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
-  zls = {},
+  -- zls ={},
   clangd = {},
   lua_ls = {
     Lua = {
@@ -504,15 +505,58 @@ local servers = {
       telemetry = { enable = false },
     },
   },
-  pyright = {}
+  pylsp = {}
 }
 
 -- Setup neovim lua configuration
-require('neodev').setup()
+require('neodev').setup({
+  library = { plugins = { "nvim-dap-ui" }, types = true }
+})
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+local dap, dapui = require("dap"), require("dapui")
+dapui.setup()
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+
+vim.keymap.set('n', '<Leader>dc', function() require('dap').continue() end)
+vim.keymap.set('n', '<Leader>dso', function() require('dap').step_over() end)
+vim.keymap.set('n', '<Leader>dsi', function() require('dap').step_into() end)
+vim.keymap.set('n', '<Leader>dsO', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>dt', function() require('dap').toggle_breakpoint() end) -- , {desc = "[D]ebug [T]oggle breakpoint"})
+vim.keymap.set('n', '<Leader>db', function() require('dap').set_breakpoint() end) -- , {desc= "[D]ebug set [Breakpoint]"})
+vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+    end)
+vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
+      require('dap.ui.widgets').preview()
+    end)
+vim.keymap.set('n', '<Leader>df', function()
+  local widgets = require('dap.ui.widgets')
+      widgets.centered_float(widgets.frames)
+    end)
+vim.keymap.set('n', '<Leader>ds', function()
+      local widgets = require('dap.ui.widgets')
+      widgets.centered_float(widgets.scopes)
+end)
+
+
 
 
 require('mason').setup()
@@ -539,6 +583,9 @@ mason_lspconfig.setup_handlers {
     }
   end
 }
+-- ZIG SETUP tracking master
+--
+require('lspconfig').zls.setup {}
 
 --- CONFIGURATION FOR METALS
 ----------------------------------
@@ -588,6 +635,11 @@ metals_config.settings = {
 }
 -- Debug settings if you're using nvim-dap
 local dap = require("dap")
+dap.adapters.lldb = {
+  type = 'executable',
+  command = '/usr/bin/lldb-vscode', -- adjust as needed, must be absolute path
+  name = 'lldb'
+}
 
 dap.configurations.scala = {
   {
@@ -607,6 +659,21 @@ dap.configurations.scala = {
       runType = "testTarget",
     },
   },
+}
+
+
+dap.configurations.zig = {
+  {
+    name = 'Launch',
+    type = 'lldb',
+    request = 'launch',
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
+    args = {},
+  }
 }
 
 metals_config.on_attach = function(client, bufnr)
