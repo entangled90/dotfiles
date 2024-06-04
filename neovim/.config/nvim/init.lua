@@ -234,6 +234,15 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
+  {
+    "lervag/vimtex",
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here, e.g.
+      vim.g.vimtex_view_method = "zathura"
+    end
+  },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -438,8 +447,10 @@ local on_attach = function(client, bufnr)
   end
 
   if client.server_capabilities.inlayHintProvider then
-    vim.lsp.buf.inlay_hint(bufnr, true)
+    vim.g.inlay_hints_visible = true
+    vim.lsp.inlay_hint.enable(true)
   end
+
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -497,7 +508,7 @@ local servers = {
     },
   },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
-  -- zls ={},
+  zls = {},
   clangd = {},
   lua_ls = {
     Lua = {
@@ -537,23 +548,24 @@ vim.keymap.set('n', '<Leader>dso', function() require('dap').step_over() end)
 vim.keymap.set('n', '<Leader>dsi', function() require('dap').step_into() end)
 vim.keymap.set('n', '<Leader>dsO', function() require('dap').step_out() end)
 vim.keymap.set('n', '<Leader>dt', function() require('dap').toggle_breakpoint() end) -- , {desc = "[D]ebug [T]oggle breakpoint"})
-vim.keymap.set('n', '<Leader>db', function() require('dap').set_breakpoint() end) -- , {desc= "[D]ebug set [Breakpoint]"})
-vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+vim.keymap.set('n', '<Leader>db', function() require('dap').set_breakpoint() end)    -- , {desc= "[D]ebug set [Breakpoint]"})
+vim.keymap.set('n', '<Leader>lp',
+  function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
 vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
 vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
-vim.keymap.set({'n', 'v'}, '<Leader>dh', function()
+vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
   require('dap.ui.widgets').hover()
-    end)
-vim.keymap.set({'n', 'v'}, '<Leader>dp', function()
-      require('dap.ui.widgets').preview()
-    end)
+end)
+vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
 vim.keymap.set('n', '<Leader>df', function()
   local widgets = require('dap.ui.widgets')
-      widgets.centered_float(widgets.frames)
-    end)
+  widgets.centered_float(widgets.frames)
+end)
 vim.keymap.set('n', '<Leader>ds', function()
-      local widgets = require('dap.ui.widgets')
-      widgets.centered_float(widgets.scopes)
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
 end)
 
 
@@ -583,9 +595,6 @@ mason_lspconfig.setup_handlers {
     }
   end
 }
--- ZIG SETUP tracking master
---
-require('lspconfig').zls.setup {}
 
 --- CONFIGURATION FOR METALS
 ----------------------------------
