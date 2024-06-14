@@ -43,6 +43,10 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- keep the selection active when indenting code
+vim.keymap.set('v', '<', '< gv')
+vim.keymap.set('v', '>', '> gv')
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -182,8 +186,22 @@ require('lazy').setup({
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      local oil = require('oil')
+      oil.setup()
+      oil.toggle_hidden()
+      vim.keymap.set('n', '-', function()
+        require('oil').toggle_float()
+      end, { desc = 'Toggle oil in floating window' })
+      -- Keymap for opening parent directory in oil.nvim
+      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+    end,
+  },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -529,6 +547,27 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 local dap, dapui = require("dap"), require("dapui")
+
+-- Config for CPP
+-- Need to compile with `g++ main.cpp -g`. Then `"a.out"` is available with debug symbols
+local current_directory = vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand("<sfile>:p")), ":h")
+local path = current_directory .. "/a.out"
+
+dap.configurations.cpp = {
+  {
+    args = {},
+    cwd = "${workspaceFolder}",
+    name = "Launch",
+    program = path,
+    request = "launch",
+    runInTerminal = true,
+    stopOnEntry = false,
+    MIMode = "gdb",
+    type = "cppdbg",
+  }
+}
+
+
 dapui.setup()
 dap.listeners.before.attach.dapui_config = function()
   dapui.open()
