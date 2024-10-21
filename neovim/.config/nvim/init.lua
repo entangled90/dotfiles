@@ -82,11 +82,9 @@ require('lazy').setup({
   { "rcarriga/nvim-dap-ui",           dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
   "mfussenegger/nvim-dap",
   "jay-babu/mason-nvim-dap.nvim",
-
   "vim-test/vim-test",
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  { 'scalameta/nvim-metals', dependencies = { "nvim-lua/plenary.nvim" } },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -109,7 +107,8 @@ require('lazy').setup({
     },
   },
 
-
+  {'nvim-java/nvim-java'},
+  {'rcarriga/nvim-notify'},
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -141,7 +140,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-night'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -285,7 +284,11 @@ require('lazy').setup({
       },
     },
   },
-
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" }
+  },
   -- {
   --   "nvim-tree/nvim-tree.lua",
   --   version = "*",
@@ -380,6 +383,7 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
+vim.highlight.priorities.semantic_tokens = 95
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -442,7 +446,7 @@ vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]ea
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'json', 'json5', 'jsonc', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'zig','java', 'scala', 'javascript', 'just' },
+  ensure_installed = { 'c', 'cpp', 'go', 'json', 'json5', 'jsonc', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'zig', 'java', 'scala', 'javascript', 'just' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -591,6 +595,7 @@ local servers = {
     },
   },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
+  marksman = {filetypes = {'md', 'mdx'}},
   zls = {},
   clangd = {},
   lua_ls = {
@@ -673,7 +678,34 @@ vim.keymap.set('n', '<Leader>ds', function()
 end)
 
 
+-- Harpoon setup
+local harpoon = require('harpoon')
+harpoon.setup()
+vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, {desc="[H]arpoon [A]dd}"})
+vim.keymap.set("n", "<leader>hq",function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, {desc="[H]arpoon [C]md}"})
 
+-- telescope setup for harpoon
+local conf = require("telescope.config").values
+local function toggle_telescope(harpoon_files)
+    local file_paths = {}
+    for _, item in ipairs(harpoon_files.items) do
+        table.insert(file_paths, item.value)
+    end
+
+    require("telescope.pickers").new({}, {
+        prompt_title = "Harpoon",
+        finder = require("telescope.finders").new_table({
+            results = file_paths,
+        }),
+        previewer = conf.file_previewer({}),
+        sorter = conf.generic_sorter({}),
+    }):find()
+end
+
+vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
+    { desc = "Open harpoon window" })
+-- 
+require('java').setup()
 
 require('mason').setup()
 
@@ -700,11 +732,11 @@ mason_lspconfig.setup_handlers {
   end
 }
 
---- CONFIGURATION FOR METALS
 ----------------------------------
 -- LSP Setup ---------------------
 ----------------------------------
-
+local lsp = require('lspconfig')
+lsp.jdtls.setup({})
 ----------------------------------
 -- OPTIONS -----------------------
 ----------------------------------
@@ -739,13 +771,7 @@ map("n", "<leader>ae", function()
   vim.diagnostic.setqflist({ severity = "E" })
 end)
 
-local metals_config = require("metals").bare_config()
 
--- Example of settings
-metals_config.settings = {
-  showImplicitArguments = true,
-  excludedPackages = { "akka.actor.typed.javadsl", "com.github.swagger.akka.javadsl" },
-}
 -- Debug settings if you're using nvim-dap
 local dap = require("dap")
 dap.adapters.lldb = {
@@ -753,27 +779,6 @@ dap.adapters.lldb = {
   command = '/usr/bin/lldb-vscode', -- adjust as needed, must be absolute path
   name = 'lldb'
 }
-
-dap.configurations.scala = {
-  {
-    type = "scala",
-    request = "launch",
-    name = "RunOrTest",
-    metals = {
-      runType = "runOrTestFile",
-      --args = { "firstArg", "secondArg", "thirdArg" }, -- here just as an example
-    },
-  },
-  {
-    type = "scala",
-    request = "launch",
-    name = "Test Target",
-    metals = {
-      runType = "testTarget",
-    },
-  },
-}
-
 
 dap.configurations.zig = {
   {
@@ -788,35 +793,6 @@ dap.configurations.zig = {
     args = {},
   }
 }
-
-metals_config.on_attach = function(client, bufnr)
-  require("metals").setup_dap()
-end
-
-
--- Autocmd that will actually be in charging of starting the whole thing
-local nvim_metals_group = api.nvim_create_augroup("nvim-metals", { clear = true })
-api.nvim_create_autocmd("FileType", {
-  -- NOTE: You may or may not want java included here. You will need it if you
-  -- want basic Java support but it may also conflict if you are using
-  -- something like nvim-jdtls which also works on a java filetype autocmd.
-  pattern = { "scala", "sbt", "java" },
-  callback = function()
-    require("metals").initialize_or_attach(metals_config)
-  end,
-  group = nvim_metals_group,
-})
-
--- *READ THIS*
--- I *highly* recommend setting statusBarProvider to true, however if you do,
--- you *have* to have a setting to display this in your statusline or else
--- you'll not see any messages from metals. There is more info in the help
--- docs about this
--- metals_config.init_options.statusBarProvider = "on"
-
--- Example if you are using cmp how to make sure the correct capabilities for snippets are set
-metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
