@@ -111,15 +111,13 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
-vim.opt_global.completeopt = { "menuone", "noinsert", "noselect" }
+vim.opt_global.completeopt = { 'menuone', 'noinsert', 'noselect' }
 
 vim.highlight.priorities.semantic_tokens = 95
 -- [[CUSTOM options]]
 -- keep the selection active when indenting code
 vim.keymap.set('v', '<', '< gv')
 vim.keymap.set('v', '>', '> gv')
-
-
 
 -- [[ Basic Keymaps ]]
 
@@ -175,11 +173,11 @@ local servers = {
       jsonc = {
         format = { enable = true },
         validate = { enable = true },
-      }
+      },
     },
   },
   html = { filetypes = { 'html', 'twig', 'hbs' } },
-  marksman = {filetypes = {'md', 'mdx'}},
+  marksman = { filetypes = { 'md', 'mdx' } },
   zls = {},
   clangd = {},
   lua_ls = {
@@ -221,14 +219,14 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'mg979/vim-visual-multi',
-  "williamboman/mason.nvim",
-  { "rcarriga/nvim-dap-ui",           dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-  "mfussenegger/nvim-dap",
-  "jay-babu/mason-nvim-dap.nvim",
-  "vim-test/vim-test",
+  'williamboman/mason.nvim',
+  { 'rcarriga/nvim-dap-ui', dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' } },
+  'mfussenegger/nvim-dap',
+  'jay-babu/mason-nvim-dap.nvim',
+  'vim-test/vim-test',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-   {
+  {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
     'folke/lazydev.nvim',
@@ -256,7 +254,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
       'hrsh7th/cmp-nvim-lsp',
@@ -420,9 +418,9 @@ require('lazy').setup({
     end,
     setup = {
       jdtls = function()
-        require('java').setup({
+        require('java').setup {
           -- Your custom nvim-java configuration goes here
-        })
+        }
       end,
     },
   },
@@ -592,8 +590,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
-
+  { 'folke/which-key.nvim', opts = {} },
 
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -612,7 +609,6 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -653,9 +649,7 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
-  { 'stevearc/dressing.nvim',
-    opts = {},
-  },
+  { 'stevearc/dressing.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -669,8 +663,7 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
-          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
@@ -696,7 +689,7 @@ require('lazy').setup({
         theme = 'onedark',
         component_separators = '|',
         section_separators = '',
-        path = 2
+        path = 2,
       },
     },
   },
@@ -706,7 +699,7 @@ require('lazy').setup({
     'lukas-reineke/indent-blankline.nvim',
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
-    main = "ibl",
+    main = 'ibl',
     opts = {
       indent = {
         char = '┊',
@@ -721,9 +714,9 @@ require('lazy').setup({
     'stevearc/oil.nvim',
     opts = {},
     -- Optional dependencies
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      local oil = require('oil')
+      local oil = require 'oil'
       oil.setup()
       oil.toggle_hidden()
       vim.keymap.set('n', '-', function()
@@ -834,37 +827,44 @@ require('lazy').setup({
     end,
   },
   {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-        -- Harpoon setup
-        local harpoon = require('harpoon')
-        harpoon.setup()
-        vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end, {desc="[H]arpoon [A]dd}"})
-        vim.keymap.set("n", "<leader>hq",function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, {desc="[H]arpoon [C]md}"})
+      -- Harpoon setup
+      local harpoon = require 'harpoon'
+      harpoon.setup()
+      vim.keymap.set('n', '<leader>ha', function()
+        harpoon:list():add()
+      end, { desc = '[H]arpoon [A]dd}' })
+      vim.keymap.set('n', '<leader>hq', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end, { desc = '[H]arpoon [C]md}' })
 
-        -- telescope setup for harpoon
-        local conf = require("telescope.config").values
-        local function toggle_telescope(harpoon_files)
-            local file_paths = {}
-            for _, item in ipairs(harpoon_files.items) do
-                table.insert(file_paths, item.value)
-            end
-
-            require("telescope.pickers").new({}, {
-                prompt_title = "Harpoon",
-                finder = require("telescope.finders").new_table({
-                    results = file_paths,
-                }),
-                previewer = conf.file_previewer({}),
-                sorter = conf.generic_sorter({}),
-            }):find()
+      -- telescope setup for harpoon
+      local conf = require('telescope.config').values
+      local function toggle_telescope(harpoon_files)
+        local file_paths = {}
+        for _, item in ipairs(harpoon_files.items) do
+          table.insert(file_paths, item.value)
         end
 
-        vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
-            { desc = "Open harpoon window" })
-    end 
+        require('telescope.pickers')
+          .new({}, {
+            prompt_title = 'Harpoon',
+            finder = require('telescope.finders').new_table {
+              results = file_paths,
+            },
+            previewer = conf.file_previewer {},
+            sorter = conf.generic_sorter {},
+          })
+          :find()
+      end
+
+      vim.keymap.set('n', '<C-e>', function()
+        toggle_telescope(harpoon:list())
+      end, { desc = 'Open harpoon window' })
+    end,
   },
   -- {
   --   "nvim-tree/nvim-tree.lua",
@@ -895,7 +895,26 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     build = ':TSUpdate',
     opts = {
-      ensure_installed =  { 'c', 'cpp', 'go', 'json', 'json5', 'jsonc', 'lua', 'python', 'rust', 'tsx', 'typescript', 'vimdoc', 'vim', 'zig', 'java', 'scala', 'javascript', 'just' },
+      ensure_installed = {
+        'c',
+        'cpp',
+        'go',
+        'json',
+        'json5',
+        'jsonc',
+        'lua',
+        'python',
+        'rust',
+        'tsx',
+        'typescript',
+        'vimdoc',
+        'vim',
+        'zig',
+        'java',
+        'scala',
+        'javascript',
+        'just',
+      },
       auto_install = true,
       highlight = {
         enable = true,
@@ -904,15 +923,29 @@ require('lazy').setup({
     },
   },
   {
-    "lervag/vimtex",
+    'lervag/vimtex',
     lazy = false, -- we don't want to lazy load VimTeX
     -- tag = "v2.15", -- uncomment to pin to a specific release
     init = function()
       -- VimTeX configuration goes here, e.g.
-      vim.g.vimtex_view_method = "zathura"
-    end
+      vim.g.vimtex_view_method = 'zathura'
+    end,
   },
-
+  {
+    'nvim-neorg/neorg',
+    lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+    version = '*', -- Pin Neorg to the latest stable release
+    config = true,
+  },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -927,5 +960,3 @@ require('lazy').setup({
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
 }, {})
-
-
