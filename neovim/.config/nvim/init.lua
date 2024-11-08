@@ -899,6 +899,7 @@ require('lazy').setup({
         'c',
         'cpp',
         'go',
+        'helm',
         'json',
         'json5',
         'jsonc',
