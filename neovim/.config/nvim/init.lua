@@ -417,19 +417,19 @@ require('lazy').setup({
       }
     end,
     setup = {
-      jdtls = function()
-        require('java').setup {
-          -- Your custom nvim-java configuration goes here
-        }
-      end,
+    --   jdtls = function()
+    --     require('java').setup {
+    --       -- Your custom nvim-java configuration goes here
+    --     }
+    --   end,
     },
   },
-  {
-    'nvim-java/nvim-java',
-    dependencies = {
-      'neovim/nvim-lspconfig',
-    },
-  },
+  -- {
+  --   'nvim-java/nvim-java',
+  --   dependencies = {
+  --     'neovim/nvim-lspconfig',
+  --   },
+  -- },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -899,21 +899,21 @@ require('lazy').setup({
         'c',
         'cpp',
         'go',
+        'java',
+        'javascript',
         'json',
         'json5',
         'jsonc',
+        'just',
         'lua',
         'python',
         'rust',
+        'scala',
         'tsx',
         'typescript',
         'vimdoc',
         'vim',
         'zig',
-        'java',
-        'scala',
-        'javascript',
-        'just',
       },
       auto_install = true,
       highlight = {
