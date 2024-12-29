@@ -107,7 +107,6 @@ require('lazy').setup({
     },
   },
 
-  {'nvim-java/nvim-java'},
   {'rcarriga/nvim-notify'},
   {
     -- Autocompletion
@@ -721,7 +720,7 @@ end
 vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
     { desc = "Open harpoon window" })
 -- 
-require('java').setup()
+-- require('java').setup()
 
 require('mason').setup()
 
