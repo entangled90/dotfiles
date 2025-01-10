@@ -87,6 +87,7 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
+export SYSTEMD_EDITOR="vim"
 
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
@@ -113,3 +114,5 @@ source ~/.zsh_custom
 export PATH="$PATH:$HOME/.local/share/coursier/bin"
 
 export PATH=$HOME/.local/bin:$PATH
+
+
