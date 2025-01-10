@@ -106,8 +106,10 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
 alias vim="nvim"
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
+alias lg="lazygit"
 source <(fzf --zsh)
 source ~/.zsh_custom
 # coursier stuff
 export PATH="$PATH:$HOME/.local/share/coursier/bin"
 
+export PATH=$HOME/.local/bin:$PATH
