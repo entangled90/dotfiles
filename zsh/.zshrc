@@ -108,7 +108,10 @@ alias vim="nvim"
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
 alias lg="lazygit"
 source <(fzf --zsh)
-source ~/.zsh_custom
+if [ -e .zsh-custom ]
+then
+  source ~/.zsh_custom
+fi
 # coursier stuff
 export PATH="$PATH:$HOME/.local/share/coursier/bin"
 
