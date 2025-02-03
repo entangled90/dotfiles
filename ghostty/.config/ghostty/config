@@ -1,7 +1,7 @@
 theme = tokyonight-storm
 
 mouse-hide-while-typing = true
-scrollback-limit = 1000000
+scrollback-limit = 10000000
 
 keybind = ctrl+n=new_window
 
@@ -24,7 +24,7 @@ keybind = ctrl+space>l=goto_split:right
 keybind = ctrl+space>f=toggle_split_zoom
 
 # keybindings for tabs
-keybind = ctrl+space>t=new_tab
+keybind = ctrl+t=new_tab
 keybind = ctrl+space>n=next_tab
 keybind = ctrl+space>p=previous_tab
 keybind = ctrl+space>o=toggle_tab_overview
