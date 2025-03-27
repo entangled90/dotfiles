@@ -108,7 +108,7 @@ alias vim="nvim"
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
 alias lg="lazygit"
 source <(fzf --zsh)
-if [ -e .zsh-custom ]
+if [ -e "$HOME/.zsh_custom" ]
 then
   source ~/.zsh_custom
 fi
