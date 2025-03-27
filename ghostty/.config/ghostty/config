@@ -1,5 +1,8 @@
 theme = tokyonight-storm
+font-family = "0xProto" 
 
+gtk-titlebar = true
+gtk-titlebar-hide-when-maximized = true
 mouse-hide-while-typing = true
 scrollback-limit = 10000000
 
