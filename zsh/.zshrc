@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions)
+plugins=(git zsh-autosuggestions kubectl kubectx k9s tmux)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -116,3 +116,9 @@ fi
 export PATH="$PATH:$HOME/.local/share/coursier/bin"
 
 export PATH=$HOME/.local/bin:$PATH
+export PATH=~/.npm-global/bin:$PATH
+# Krew section
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+#
+[ -f "$HOME/.kubectl_aliases" ] && source ~/.kubectl_aliases
+
