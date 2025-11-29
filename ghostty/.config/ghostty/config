@@ -1,4 +1,4 @@
-theme = tokyonight-storm
+theme = TokyoNight Storm
 font-family = "0xProto" 
 
 gtk-titlebar = true
@@ -9,10 +9,10 @@ scrollback-limit = 10000000
 keybind = ctrl+n=new_window
 
 # keybindings for splits
-keybind = ctrl+h=goto_split:left
-keybind = ctrl+j=goto_split:bottom
-keybind = ctrl+k=goto_split:top
-keybind = ctrl+l=goto_split:right
+#keybind = ctrl+h=goto_split:left
+#keybind = ctrl+j=goto_split:bottom
+#keybind = ctrl+k=goto_split:top
+#keybind = ctrl+l=goto_split:right
 
 #create a new split
 # vertical split
@@ -41,3 +41,4 @@ keybind = super+r=reload_config
 
 window-save-state = always
 
+keybind = shift+enter=text:\n
