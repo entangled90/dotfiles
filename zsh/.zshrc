@@ -116,3 +116,8 @@ fi
 export PATH="$PATH:$HOME/.local/share/coursier/bin"
 
 export PATH=$HOME/.local/bin:$PATH
+export PATH=~/.npm-global/bin:$PATH
+
+if [ -f "~/.zsh_custom" ]; then
+	source ~/.zsh_custom
+fi
