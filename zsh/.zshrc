@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions)
+plugins=(git zsh-autosuggestions kubectl kubectx k9s tmux vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -88,6 +88,44 @@ else
   export EDITOR='nvim'
 fi
 
+
+## VIM MODE IN ZSH
+# # enable vim mode
+# bindkey -v
+# # edit command line with editor
+# autoload edit-command-line 
+# zle -N edit-command-line
+# bindkey -M vicmd v edit-command-line
+#
+#
+# export VI_MODE_SET_CURSOR=true
+#
+# function zle-keymap-select {
+#   if [[ ${KEYMAP} == vicmd ]]; then
+#     echo -ne '\e[2 q' # block cursor 
+#   else 
+#     echo -ne '\e[6 q' # block cursor 
+#   fi
+# }
+# zle -N zle-keymap-select
+#
+# # start in insert mode
+# function zle-line-init(){
+#   zle -K viins
+#   echo -ne '\e[6 q'
+# }
+# zle -N zle-line-init
+#
+#
+# function vi-yank-clipboard {
+#   zle vi-yank 
+#   echo "$CUTBUFFER" | wl-copy
+# }
+# zle -N vi-yank-clipboard
+# bindkey -M vicmd 'y' vi-yank-clipboard
+
+
+
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
 
@@ -102,22 +140,42 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
 alias vim="nvim"
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
 alias lg="lazygit"
+
+# # alias zoxide if installed
+# which zoxide >/dev/null 2>&1  && alias cd="zoxide"
+
 source <(fzf --zsh)
+
 if [ -e "$HOME/.zsh_custom" ]
 then
   source ~/.zsh_custom
 fi
 # coursier stuff
-export PATH="$PATH:$HOME/.local/share/coursier/bin"
-
+COURSIER_FOLDER="$HOME/.local/share/coursier"
+if [ -f COURSIER_FOLDER ]; then
+  export PATH="$PATH:$HOME/.local/share/coursier/bin"
+fi
 export PATH=$HOME/.local/bin:$PATH
 export PATH=~/.npm-global/bin:$PATH
 
 if [ -f "~/.zsh_custom" ]; then
 	source ~/.zsh_custom
 fi
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+# Krew section
+if [ -f "$KREW_ROOT"]; then 
+  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+fi 
+if [ -z "$GOPATH" ]
+then
+  export GOPATH="$HOME/go"
+  export PATH=$PATH:$GOPATH/bin
+fi 
+#
+[ -f "$HOME/.kubectl_aliases" ] && source ~/.kubectl_aliases
