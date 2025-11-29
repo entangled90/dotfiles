@@ -141,7 +141,7 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
-alias vim="nvim"
+
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
 alias lg="lazygit"
 
@@ -179,3 +179,8 @@ then
 fi 
 #
 [ -f "$HOME/.kubectl_aliases" ] && source ~/.kubectl_aliases
+
+
+if [ -e "/opt/nvim-linux-x86_64/bin" ]; then
+	export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+fi 
