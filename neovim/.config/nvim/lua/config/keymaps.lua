@@ -9,3 +9,5 @@
 local map = vim.keymap.set
 
 map("i", "jj", "<Esc>")
+
+map("n", ";;", "$a;<Esc>")
