@@ -141,7 +141,6 @@ alias nvim-bare="nvim --noplugin"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
 alias vim="nvim"
 alias hist=" history |  fzf " #--bind 'enter:become({+2})'"
@@ -157,17 +156,27 @@ then
   source ~/.zsh_custom
 fi
 # coursier stuff
-export PATH="$PATH:$HOME/.local/share/coursier/bin"
+COURSIER_FOLDER="$HOME/.local/share/coursier"
+if [ -f COURSIER_FOLDER ]; then
+  export PATH="$PATH:$HOME/.local/share/coursier/bin"
+fi
+export PATH=$HOME/.local/bin:$PATH
+export PATH=~/.npm-global/bin:$PATH
 
+if [ -f "~/.zsh_custom" ]; then
+	source ~/.zsh_custom
+fi
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 # Krew section
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+if [ -f "$KREW_ROOT"]; then 
+  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+fi 
 if [ -z "$GOPATH" ]
 then
   export GOPATH="$HOME/go"
+  export PATH=$PATH:$GOPATH/bin
 fi 
-export PATH=$PATH:$GOPATH/bin
 #
 [ -f "$HOME/.kubectl_aliases" ] && source ~/.kubectl_aliases
