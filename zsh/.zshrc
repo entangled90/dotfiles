@@ -89,6 +89,7 @@ else
 fi
 
 
+alias nvim-bare="nvim --noplugin"
 ## VIM MODE IN ZSH
 # # enable vim mode
 # bindkey -v
