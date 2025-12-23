@@ -155,10 +155,10 @@ then
   source ~/.zsh_custom
 fi
 # coursier stuff
-COURSIER_FOLDER="$HOME/.local/share/coursier"
-if [ -f COURSIER_FOLDER ]; then
-  export PATH="$PATH:$HOME/.local/share/coursier/bin"
-fi
+COURSIER_FOLDER="$HOME/.local/share/coursier/bin"
+if [ -e "$COURSIER_FOLDER" ]; then 
+  export PATH="$PATH:$COURSIER_FOLDER"
+fi 
 export PATH=$HOME/.local/bin:$PATH
 export PATH=~/.npm-global/bin:$PATH
 
@@ -184,3 +184,6 @@ fi
 if [ -e "/opt/nvim-linux-x86_64/bin" ]; then
 	export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 fi 
+
+# opencode
+export PATH=/home/carlo/.opencode/bin:$PATH
